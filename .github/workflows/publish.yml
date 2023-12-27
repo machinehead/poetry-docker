@@ -1,4 +1,4 @@
-name: Publish
+name: Docker Publish
 
 on:
   push:
@@ -11,12 +11,16 @@ on:
       - 'main'
 
 jobs:
-  docker:
+  build-and-push-image:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.11, 3.11-slim]
+        poetry-version: [1.7.1]
     steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v4
+#      -
+#        name: Checkout
+#        uses: actions/checkout@v4
       -
         # https://github.com/docker/metadata-action
         name: Docker meta
@@ -25,7 +29,7 @@ jobs:
         with:
           images: ilyanekhay/poetry
           tags: |
-            py3.11-poetry1.7.1
+            ${{ matrix.poetry-version }}-py${{ matrix.python-version }}
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v3
