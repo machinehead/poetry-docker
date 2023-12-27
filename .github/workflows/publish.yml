@@ -26,6 +26,8 @@ jobs:
           images: ilyanekhay/poetry
           tags: |
             py3.11-poetry1.7.1
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
       -
         name: Login to DockerHub
         if: github.event_name != 'pull_request'
