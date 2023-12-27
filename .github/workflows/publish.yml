@@ -1,4 +1,4 @@
-name: Publish
+name: Docker Publish
 
 on:
   push:
@@ -11,8 +11,14 @@ on:
       - 'main'
 
 jobs:
-  docker:
+  build-and-push-image:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-image-tag: [3.11, 3.11-slim]
+        poetry-version: [1.7.1]
+    env:
+      IMAGE_TAG: ${{ matrix.poetry-version }}-py${{ matrix.python-image-tag }}
     steps:
       -
         name: Checkout
@@ -25,7 +31,7 @@ jobs:
         with:
           images: ilyanekhay/poetry
           tags: |
-            py3.11-poetry1.7.1
+            ${{ env.IMAGE_TAG }}
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -44,7 +50,12 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          build-args: |
+            PYTHON_IMAGE_TAG=${{ matrix.python-image-tag }}
+            POETRY_VERSION=${{ matrix.poetry-version }}
           platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=${{ env.IMAGE_TAG }}
+          cache-to: type=gha,mode=max,scope=${{ env.IMAGE_TAG }}

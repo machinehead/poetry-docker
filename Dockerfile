@@ -1,4 +1,6 @@
-FROM python:3.11 as poetry-installer
+ARG PYTHON_IMAGE_TAG=3.11-slim
+
+FROM python:${PYTHON_IMAGE_TAG} as poetry-installer
 
 RUN apt update
 RUN apt install -y pipx
@@ -6,7 +8,9 @@ RUN apt install -y pipx
 # Instead of using `pipx ensurepath`, we just modify the PATH:
 ENV PATH /root/.local/bin:$PATH
 
-RUN pipx install poetry==1.7.1
+ARG POETRY_VERSION=1.7.1
+
+RUN pipx install poetry==${POETRY_VERSION}
 
 FROM python:3.11 as result
 
