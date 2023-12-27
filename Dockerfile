@@ -1,4 +1,4 @@
-FROM python:3.11
+FROM python:3.11 as poetry-installer
 
 RUN apt update
 RUN apt install -y pipx
@@ -8,20 +8,14 @@ ENV PATH /root/.local/bin:$PATH
 
 RUN pipx install poetry==1.7.1
 
-# TODO: multistage build to not carry over apt/pipx
+FROM python:3.11 as result
 
-# RUN which poetry
-# /root/.local/bin/poetry
-
-# RUN ls -la /root/.local/bin
-# drwxr-xr-x 2 root root 4096 Dec 27 19:02 .
-# drwxr-xr-x 4 root root 4096 Dec 27 19:02 ..
-# lrwxrwxrwx 1 root root   41 Dec 27 19:02 poetry -> /root/.local/pipx/venvs/poetry/bin/poetry
-
-# RUN ls -la /root/.local/bin/poetry
-# lrwxrwxrwx 1 root root 41 Dec 27 19:02 /root/.local/bin/poetry -> /root/.local/pipx/venvs/poetry/bin/poetry
+COPY --from=poetry-installer /root/.local /root/.local
+# Path to poetry binary installed by pipx:
+ENV PATH /root/.local/bin:$PATH
 
 # https://medium.com/@albertazzir/blazing-fast-python-docker-builds-with-poetry-a78a66f5aed0
 
 # Using `poetry config` instead of env vars to verify that poetry is accessible
-RUN poetry config virtualenvs.create true
+RUN poetry config virtualenvs.create true && \
+    poetry config virtualenvs.in-project true
