@@ -6,8 +6,7 @@ RUN apt install -y pipx
 # Instead of using `pipx ensurepath`, we just modify the PATH:
 ENV PATH /root/.local/bin:$PATH
 
-# TODO: pin poetry version
-RUN pipx install poetry
+RUN pipx install poetry==1.7.1
 
 # TODO: multistage build to not carry over apt/pipx
 
