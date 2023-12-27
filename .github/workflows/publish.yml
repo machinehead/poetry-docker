@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.11, 3.11-slim]
+        python-image-tag: [3.11, 3.11-slim]
         poetry-version: [1.7.1]
     steps:
       -
@@ -29,7 +29,7 @@ jobs:
         with:
           images: ilyanekhay/poetry
           tags: |
-            ${{ matrix.poetry-version }}-py${{ matrix.python-version }}
+            ${{ matrix.poetry-version }}-py${{ matrix.python-image-tag }}
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -48,6 +48,9 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          build-args: |
+            PYTHON_IMAGE_TAG=${{ matrix.python-image-tag }}
+            POETRY_VERSION=${{ matrix.poetry-version }}
           platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
