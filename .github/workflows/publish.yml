@@ -18,9 +18,9 @@ jobs:
         python-version: [3.11, 3.11-slim]
         poetry-version: [1.7.1]
     steps:
-#      -
-#        name: Checkout
-#        uses: actions/checkout@v4
+      -
+        name: Checkout
+        uses: actions/checkout@v4
       -
         # https://github.com/docker/metadata-action
         name: Docker meta
