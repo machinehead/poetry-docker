@@ -17,6 +17,8 @@ jobs:
       matrix:
         python-image-tag: [3.11, 3.11-slim]
         poetry-version: [1.7.1]
+    env:
+      IMAGE_TAG: ${{ matrix.poetry-version }}-py${{ matrix.python-image-tag }}
     steps:
       -
         name: Checkout
@@ -29,7 +31,7 @@ jobs:
         with:
           images: ilyanekhay/poetry
           tags: |
-            ${{ matrix.poetry-version }}-py${{ matrix.python-image-tag }}
+            ${{ env.IMAGE_TAG }}
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -55,3 +57,5 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=${{ env.IMAGE_TAG }}
+          cache-to: type=gha,mode=max,scope=${{ env.IMAGE_TAG }}
