@@ -12,7 +12,7 @@ ARG POETRY_VERSION=1.7.1
 
 RUN pipx install poetry==${POETRY_VERSION}
 
-FROM python:3.11 as result
+FROM python:${PYTHON_IMAGE_TAG} as result
 
 COPY --from=poetry-installer /root/.local /root/.local
 # Path to poetry binary installed by pipx:
