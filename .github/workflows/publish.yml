@@ -18,7 +18,7 @@ jobs:
         python-image-tag: [3.11, 3.11-slim]
         poetry-version: [1.7.1]
     env:
-      IMAGE_TAG: ${{ matrix.poetry-version }}-py${{ matrix.python-image-tag }}
+      IMAGE_TAG: poetry${{ matrix.poetry-version }}-py${{ matrix.python-image-tag }}
     steps:
       -
         name: Checkout
