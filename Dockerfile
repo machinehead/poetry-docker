@@ -22,6 +22,7 @@ COPY --from=poetry-installer ${POETRY_HOME} ${POETRY_HOME}
 
 # Using `poetry config` instead of env vars to verify that poetry is accessible
 RUN poetry config virtualenvs.create true && \
-    poetry config virtualenvs.in-project false
+    poetry config virtualenvs.in-project false && \
+    poetry config virtualenvs.path /opt/virtualenvs
 
 ENV POETRY_CACHE_DIR /tmp/poetry_cache
