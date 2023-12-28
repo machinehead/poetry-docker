@@ -1,22 +1,22 @@
 ARG PYTHON_IMAGE_TAG=3.11-slim
 
-FROM python:${PYTHON_IMAGE_TAG} as poetry-installer
+FROM python:${PYTHON_IMAGE_TAG} as base
 
-RUN apt update
-RUN apt install -y pipx
-
-# Instead of using `pipx ensurepath`, we just modify the PATH:
-ENV PATH /root/.local/bin:$PATH
+ENV POETRY_HOME /opt/poetry
+ENV PATH $POETRY_HOME/bin:$PATH
 
 ARG POETRY_VERSION=1.7.1
+ENV POETRY_VERSION=${POETRY_VERSION}
 
-RUN pipx install poetry==${POETRY_VERSION}
+FROM base as poetry-installer
 
-FROM python:${PYTHON_IMAGE_TAG} as result
+RUN apt-get update && apt-get install -y --no-install-recommends curl
 
-COPY --from=poetry-installer /root/.local /root/.local
-# Path to poetry binary installed by pipx:
-ENV PATH /root/.local/bin:$PATH
+RUN curl -sSL https://install.python-poetry.org | python3 - --version ${POETRY_VERSION}
+
+FROM base as result
+
+COPY --from=poetry-installer ${POETRY_HOME} ${POETRY_HOME}
 
 # https://medium.com/@albertazzir/blazing-fast-python-docker-builds-with-poetry-a78a66f5aed0
 
