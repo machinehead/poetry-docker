@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         python-image-tag: [3.11, 3.11-slim]
-        poetry-version: [1.7.1]
+        poetry-version: [1.7.1, 2.0.1]
     env:
       IMAGE_TAG: poetry${{ matrix.poetry-version }}-py${{ matrix.python-image-tag }}
     steps:
