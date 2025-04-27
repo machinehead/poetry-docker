@@ -14,7 +14,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl
 
 RUN curl -sSL https://install.python-poetry.org | python3 - --version ${POETRY_VERSION}
 
-FROM base as result
+FROM base as install-tools
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends git \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+
+FROM install-tools as result
 
 COPY --from=poetry-installer ${POETRY_HOME} ${POETRY_HOME}
 
